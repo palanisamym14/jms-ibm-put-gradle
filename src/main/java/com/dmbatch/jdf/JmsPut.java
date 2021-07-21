@@ -43,16 +43,8 @@ public class JmsPut implements RequestHandler<Map<String,String>,String> {
 
         try {
             // Create a connection factory
-            System.out.println("\n\n}===========JMS================={\n");
-
             JmsFactoryFactory ff = JmsFactoryFactory.getInstance(WMQConstants.WMQ_PROVIDER);
             JmsConnectionFactory cf = ff.createConnectionFactory();
-            System.out.println(CHANNEL);
-            System.out.println(HOST);
-            System.out.println(PORT);
-            System.out.println(QMGR);
-            System.out.println(APP_USER);
-            System.out.println(APP_PASSWORD);
 
             // Set the properties
             cf.setStringProperty(WMQConstants.WMQ_HOST_NAME, HOST);
@@ -79,9 +71,6 @@ public class JmsPut implements RequestHandler<Map<String,String>,String> {
             UUID uuid = UUID.randomUUID();
             String corrid = uuid.toString();
             message.setJMSCorrelationID(corrid);
-
-            System.out.println("\n\n}============================{\n");
-
             System.out.println("\nRest request received with body: " + jsonbody);
 
 
@@ -90,6 +79,7 @@ public class JmsPut implements RequestHandler<Map<String,String>,String> {
 
             producer.send(destination, message);
             System.out.println("\nPut message to STOCK queue: " + jsonbody);
+            
             return message.toString();
 
         } catch (JMSException jmsex) {
