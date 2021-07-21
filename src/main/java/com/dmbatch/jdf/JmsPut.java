@@ -20,13 +20,15 @@ public class JmsPut implements RequestHandler<Map<String,String>,String> {
     String HOST = System.getenv("QMGR_HOST");// Host name or IP address
     String PORT_STRING = System.getenv("QMGR_PORT");
     int PORT = Integer.parseInt(PORT_STRING); // Listener port for your queue manager
-    String CHANNEL = "CLOUD.APP.SVRCONN"; // Channel name
+    String CHANNEL = System.getenv("QMGR_CHANNEL");
     String QMGR = System.getenv("QMGR_NAME"); // Queue manager name
     String APP_USER = System.getenv("APP_USER"); // User name that application uses to connect to MQ
     String APP_PASSWORD = System.getenv("APP_PASSWORD"); //Password that the application uses to connect to MQ
     String TARGET_QUEUE_NAME = System.getenv("TARGET_QUEUE_NAME"); // Queue that the application uses to put and get messages to and from
     String WMQ_APPLICATION_NAME = System.getenv("WMQ_APPLICATION_NAME"); // Queue that the application uses to put and get messages to and from
 //    String RESPONSE_QUEUE_NAME = System.getenv("RESPONSE_QUEUE_NAME"); // Queue that the application uses to put and get messages to and fro
+
+
 
     // Create variables for the connection to MQ
     @Override
@@ -45,7 +47,12 @@ public class JmsPut implements RequestHandler<Map<String,String>,String> {
 
             JmsFactoryFactory ff = JmsFactoryFactory.getInstance(WMQConstants.WMQ_PROVIDER);
             JmsConnectionFactory cf = ff.createConnectionFactory();
-            System.out.println("\n\n}===========INIt================={\n");
+            System.out.println(CHANNEL);
+            System.out.println(HOST);
+            System.out.println(PORT);
+            System.out.println(QMGR);
+            System.out.println(APP_USER);
+            System.out.println(APP_PASSWORD);
 
             // Set the properties
             cf.setStringProperty(WMQConstants.WMQ_HOST_NAME, HOST);
@@ -54,16 +61,19 @@ public class JmsPut implements RequestHandler<Map<String,String>,String> {
             cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
             cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, QMGR);
             cf.setStringProperty(WMQConstants.WMQ_APPLICATIONNAME, WMQ_APPLICATION_NAME);
-            cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
+            cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, false);
             cf.setStringProperty(WMQConstants.USERID, APP_USER);
-//            cf.setStringProperty(WMQConstants.PASSWORD, APP_PASSWORD);
+            if(APP_PASSWORD !=null){
+                cf.setStringProperty(WMQConstants.PASSWORD, APP_PASSWORD);
+            }
 
             // Create JMS objects
             jmscontext = cf.createContext();
+            System.out.println(TARGET_QUEUE_NAME);
             destination = jmscontext.createQueue("queue:///" + TARGET_QUEUE_NAME);
 
-            String product = input.get("product");
-            String jsonbody = "{ \"product\": \"" + product + "\" }";
+            String inputMessage = input.get("message");
+            String jsonbody = "{ \"message\": \"" + inputMessage + "\" }";
             TextMessage message = jmscontext.createTextMessage(jsonbody);
 
             UUID uuid = UUID.randomUUID();
