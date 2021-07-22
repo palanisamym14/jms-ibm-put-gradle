@@ -7,6 +7,7 @@ import com.ibm.msg.client.jms.JmsFactoryFactory;
 import com.ibm.msg.client.wmq.WMQConstants;
 
 import javax.jms.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -67,7 +68,7 @@ public class JmsPut implements RequestHandler<RequestQueue, Object> {
             String[] inputMessage = input.getMessage();
             List<Object> response = null;
             for (String tempMsg : inputMessage) {
-                Map<String, Object> responseObj = null;
+                HashMap<String, Object> responseObj = new HashMap<String, Object>();
                 System.out.println("\nRest request received with body: " + tempMsg);
                 TextMessage message = jmscontext.createTextMessage(tempMsg);
 
