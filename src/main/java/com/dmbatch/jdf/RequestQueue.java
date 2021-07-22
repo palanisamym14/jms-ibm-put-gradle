@@ -29,13 +29,13 @@ class ConnectionInfo {
 public class RequestQueue {
     public ConnectionInfo connection;
     @NonNull
-    String Message;
+    String[] message;
 
     public boolean validateInput() {
         if (this.getConnection() == null) {
             throw new Error("connection Object Required");
         }
-        if (this.getMessage() == null) {
+        if (this.getMessage() == null || this.getMessage().length == 0) {
             throw new Error("message is Required");
         }
         if (this.connection.getApplicationName() == null) {
