@@ -7,6 +7,7 @@ import com.ibm.msg.client.jms.JmsFactoryFactory;
 import com.ibm.msg.client.wmq.WMQConstants;
 
 import javax.jms.*;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -64,7 +65,7 @@ public class JmsPut implements RequestHandler<RequestQueue, Object> {
             destination = jmscontext.createQueue("queue:///" + TARGET_QUEUE_NAME);
 
             String[] inputMessage = input.getMessage();
-            Object[] response = null;
+            List<Object> response = null;
             for (String tempMsg : inputMessage) {
                 Map<String, Object> responseObj = null;
                 System.out.println("\nRest request received with body: " + tempMsg);
@@ -86,6 +87,7 @@ public class JmsPut implements RequestHandler<RequestQueue, Object> {
                     System.out.println("\nPut message Failed STOCK queue: " + tempMsg);
                     responseObj.put("stack", message.toString());
                 }
+                response.add(responseObj);
             }
             Map<String, Object> res = null;
             res.put("status", "success");
